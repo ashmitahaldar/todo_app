@@ -1,11 +1,17 @@
 import 'dart:html';
+import 'dart:convert';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:date_time_picker/date_time_picker.dart';
 import 'package:intl/intl.dart';
 import 'package:flutter/services.dart';
-import 'package:sqflite/sqflite.dart';
+
+import 'models/note.dart';
+import 'package:hive/hive.dart';
+import 'package:hive_flutter/hive_flutter.dart';
+
+const String noteBoxName = "note";
 
 class AddTaskScreen extends StatefulWidget {
   AddTaskScreen({Key? key, required this.title}) : super(key: key);
@@ -19,12 +25,16 @@ class AddTaskScreen extends StatefulWidget {
 class _AddTaskScreenState extends State<AddTaskScreen> {
   TextEditingController titleInput = TextEditingController();
   TextEditingController dateInput = TextEditingController();
+  late Box<Note> box;
+  late int noteCount;
+  late String saveddatetime;
 
   @override
   void initState() {
     titleInput.text = "";
     dateInput.text = ""; //set the initial value of text field
     super.initState();
+    box = Hive.box<Note>(noteBoxName);
   }
 
   @override
@@ -83,18 +93,24 @@ class _AddTaskScreenState extends State<AddTaskScreen> {
                   }
                   return true;
                 },
-                onChanged: (val) => print(val),
+                onChanged: (val) => saveddatetime = val,
                 validator: (val) {
                   print(val);
                   return null;
                 },
-                onSaved: (val) => print(val),
               ),
             ),
           ],
         ),
         floatingActionButton: FloatingActionButton.extended(
           onPressed: () {
+            Note mData = Note(
+                id: 1,
+                title: titleInput.text,
+                datetime: saveddatetime,
+                complete: false);
+            box.add(mData);
+            Navigator.pop(context);
             Navigator.push(
                 context,
                 MaterialPageRoute(
