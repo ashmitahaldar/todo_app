@@ -10,9 +10,8 @@ const String noteBoxName = "note";
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  final document = await getApplicationDocumentsDirectory();
   // Initializes Hive with a valid directory in your app files
-  Hive.init(document.path);
+  await Hive.initFlutter();
   // Hive.registerAdapter(NoteAdapter());
   await Hive.openBox<Note>(noteBoxName);
   runApp(const MyApp());

@@ -25,20 +25,25 @@ class AddTaskScreen extends StatefulWidget {
 class _AddTaskScreenState extends State<AddTaskScreen> {
   TextEditingController titleInput = TextEditingController();
   TextEditingController dateInput = TextEditingController();
-  late Box<Note> box;
+  late Box<Note> _box;
   late int noteCount;
-  late String saveddatetime;
+  late DateTime saveddatetime;
 
   @override
   void initState() {
     titleInput.text = "";
     dateInput.text = ""; //set the initial value of text field
     super.initState();
-    box = Hive.box<Note>(noteBoxName);
+    _box = Hive.box<Note>(noteBoxName);
+  }
+
+  void initSavedDateTime() {
+    saveddatetime = DateTime.now();
   }
 
   @override
   Widget build(BuildContext context) {
+    initSavedDateTime();
     return MaterialApp(
       home: Scaffold(
         appBar: AppBar(
@@ -93,7 +98,7 @@ class _AddTaskScreenState extends State<AddTaskScreen> {
                   }
                   return true;
                 },
-                onChanged: (val) => saveddatetime = val,
+                onChanged: (val) => saveddatetime = DateTime.parse(val),
                 validator: (val) {
                   print(val);
                   return null;
@@ -109,7 +114,7 @@ class _AddTaskScreenState extends State<AddTaskScreen> {
                 title: titleInput.text,
                 datetime: saveddatetime,
                 complete: false);
-            box.add(mData);
+            _box.add(mData);
             Navigator.pop(context);
             Navigator.push(
                 context,

@@ -9,7 +9,7 @@ class Note {
   @HiveField(1)
   final String title;
   @HiveField(2)
-  final String datetime;
+  final DateTime datetime;
   @HiveField(3)
   final bool complete;
 

@@ -2,9 +2,16 @@ import 'dart:html';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:hive/hive.dart';
+import 'package:hive_flutter/hive_flutter.dart';
 import 'package:todo_app/design/noteTile.dart';
+import 'package:todo_app/models/note.dart';
 
 import 'addtask_screen.dart';
+
+const String noteBoxName = "note";
+
+late Box<Note> _box = Hive.box<Note>(noteBoxName);
 
 class HomeScreen extends StatefulWidget {
   HomeScreen({Key? key, required this.title}) : super(key: key);
@@ -21,6 +28,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
   @override
   void initState() {
     super.initState();
+    _box = Hive.box<Note>(noteBoxName);
     _tabController = TabController(length: 2, vsync: this);
   }
 
@@ -57,11 +65,11 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
               children: <Widget>[
                 Scaffold(
                     body: ListView(
-                  children: _getTodoItems(),
+                  children: _getTodoItems(_box, false),
                 )),
                 Scaffold(
                     body: ListView(
-                  children: _getTodoItems(),
+                  children: _getTodoItems(_box, true),
                 )),
               ],
             ),
@@ -84,11 +92,13 @@ Widget _buildTitle() => const Text(
       textAlign: TextAlign.left,
     );
 
-List<Widget> _getTodoItems() {
+List<Widget> _getTodoItems(Box<Note> notebox, bool completed) {
   final List<Widget> _todoItems = <Widget>[];
-  for (int i = 0; i < 5; i++) {
+  List<Note> notes = notebox.values.toList();
+  for (Note n in notes) {
     //String title in _todoList
-    _todoItems.add(noteTile(title: "Test", datetime: DateTime.now()));
+    if (n.complete == completed) {}
+    _todoItems.add(noteTile(title: n.title, datetime: n.datetime));
   }
   return _todoItems;
 }
