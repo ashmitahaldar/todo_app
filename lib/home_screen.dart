@@ -97,7 +97,10 @@ List<Widget> _getTodoItems(Box<Note> notebox, bool completed) {
   List<Note> notes = notebox.values.toList();
   notes.forEach((n) => {
         if (n.complete == completed)
-          {_todoItems.add(noteTile(title: n.title, datetime: n.datetime))}
+          {
+            _todoItems.add(
+                noteTile(notekey: n.key, title: n.title, datetime: n.datetime))
+          }
       });
   //String title in _todoList
   return _todoItems;

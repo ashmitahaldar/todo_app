@@ -3,21 +3,15 @@ import 'package:hive/hive.dart';
 part 'note.hive_generator.g.dart';
 
 @HiveType(typeId: 0)
-class Note {
+class Note extends HiveObject {
   @HiveField(0)
-  final int id;
-  @HiveField(1)
   final String title;
-  @HiveField(2)
+  @HiveField(1)
   final DateTime datetime;
-  @HiveField(3)
+  @HiveField(2)
   final bool complete;
 
-  Note(
-      {required this.id,
-      required this.title,
-      required this.datetime,
-      required this.complete});
+  Note({required this.title, required this.datetime, required this.complete});
 }
 
 

@@ -10,6 +10,7 @@ import 'package:flutter/services.dart';
 import 'models/note.dart';
 import 'package:hive/hive.dart';
 import 'package:hive_flutter/hive_flutter.dart';
+import 'home_screen.dart';
 
 const String noteBoxName = "note";
 
@@ -105,16 +106,16 @@ class _AddTaskScreenState extends State<AddTaskScreen> {
         floatingActionButton: FloatingActionButton.extended(
           onPressed: () {
             Note mData = Note(
-                id: 1,
                 title: titleInput.text,
                 datetime: DateTime.parse(dateInput.text),
                 complete: false);
             _box.add(mData);
             Navigator.pop(context);
-            Navigator.push(
+            Navigator.pushReplacement(
                 context,
                 MaterialPageRoute(
-                    builder: (context) => AddTaskScreen(title: "Add Task")));
+                    builder: (BuildContext context) =>
+                        HomeScreen(title: 'Home Page')));
           },
           backgroundColor: Colors.blue,
           icon: const Icon(Icons.check),
