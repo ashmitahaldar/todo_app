@@ -27,7 +27,6 @@ class _AddTaskScreenState extends State<AddTaskScreen> {
   TextEditingController dateInput = TextEditingController();
   late Box<Note> _box;
   late int noteCount;
-  late DateTime saveddatetime;
 
   @override
   void initState() {
@@ -37,13 +36,8 @@ class _AddTaskScreenState extends State<AddTaskScreen> {
     _box = Hive.box<Note>(noteBoxName);
   }
 
-  void initSavedDateTime() {
-    saveddatetime = DateTime.now();
-  }
-
   @override
   Widget build(BuildContext context) {
-    initSavedDateTime();
     return MaterialApp(
       home: Scaffold(
         appBar: AppBar(
@@ -85,12 +79,13 @@ class _AddTaskScreenState extends State<AddTaskScreen> {
               child: DateTimePicker(
                 type: DateTimePickerType.dateTimeSeparate,
                 dateMask: 'd MMM, yyyy',
-                initialValue: DateTime.now().toString(),
+                //initialValue: DateTime.now().toString(),
                 firstDate: DateTime(2000),
                 lastDate: DateTime(2100),
                 icon: Icon(Icons.event),
                 dateLabelText: 'Date',
                 timeLabelText: "Time",
+                controller: dateInput,
                 selectableDayPredicate: (date) {
                   // Disable weekend days to select from the calendar
                   if (date.weekday == 6 || date.weekday == 7) {
@@ -98,7 +93,7 @@ class _AddTaskScreenState extends State<AddTaskScreen> {
                   }
                   return true;
                 },
-                onChanged: (val) => saveddatetime = DateTime.parse(val),
+                onChanged: (val) => print(val),
                 validator: (val) {
                   print(val);
                   return null;
@@ -112,7 +107,7 @@ class _AddTaskScreenState extends State<AddTaskScreen> {
             Note mData = Note(
                 id: 1,
                 title: titleInput.text,
-                datetime: saveddatetime,
+                datetime: DateTime.parse(dateInput.text),
                 complete: false);
             _box.add(mData);
             Navigator.pop(context);

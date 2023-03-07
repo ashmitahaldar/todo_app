@@ -95,10 +95,10 @@ Widget _buildTitle() => const Text(
 List<Widget> _getTodoItems(Box<Note> notebox, bool completed) {
   final List<Widget> _todoItems = <Widget>[];
   List<Note> notes = notebox.values.toList();
-  for (Note n in notes) {
-    //String title in _todoList
-    if (n.complete == completed) {}
-    _todoItems.add(noteTile(title: n.title, datetime: n.datetime));
-  }
+  notes.forEach((n) => {
+        if (n.complete == completed)
+          {_todoItems.add(noteTile(title: n.title, datetime: n.datetime))}
+      });
+  //String title in _todoList
   return _todoItems;
 }

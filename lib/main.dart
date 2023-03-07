@@ -12,7 +12,7 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   // Initializes Hive with a valid directory in your app files
   await Hive.initFlutter();
-  // Hive.registerAdapter(NoteAdapter());
+  Hive.registerAdapter(NoteAdapter());
   await Hive.openBox<Note>(noteBoxName);
   runApp(const MyApp());
 }
