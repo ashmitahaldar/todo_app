@@ -2,9 +2,16 @@ import 'dart:html';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:hive/hive.dart';
+import 'package:hive_flutter/hive_flutter.dart';
 import 'package:todo_app/design/noteTile.dart';
+import 'package:todo_app/models/note.dart';
 
 import 'addtask_screen.dart';
+
+const String noteBoxName = "note";
+
+late Box<Note> _box = Hive.box<Note>(noteBoxName);
 
 class HomeScreen extends StatefulWidget {
   HomeScreen({Key? key, required this.title}) : super(key: key);
@@ -21,6 +28,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
   @override
   void initState() {
     super.initState();
+    _box = Hive.box<Note>(noteBoxName);
     _tabController = TabController(length: 2, vsync: this);
   }
 
@@ -52,19 +60,53 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                     },
                   )
                 ]),
-            body: TabBarView(
-              controller: _tabController,
-              children: <Widget>[
-                Scaffold(
-                    body: ListView(
-                  children: _getTodoItems(),
-                )),
-                Scaffold(
-                    body: ListView(
-                  children: _getTodoItems(),
-                )),
-              ],
-            ),
+            body: TabBarView(controller: _tabController, children: [
+              ValueListenableBuilder(
+                  // incomplete tasks
+                  valueListenable: _box.listenable(),
+                  builder: (context, Box<Note> box, _) {
+                    return ListView.builder(
+                      itemCount: box.length,
+                      itemBuilder: (context, index) {
+                        Note n = box.getAt(index)!;
+                        if (!n.complete) {
+                          return noteTile(note: n);
+                        } else {
+                          return const SizedBox(width: 0, height: 0);
+                        }
+                      },
+                    );
+                  }),
+              ValueListenableBuilder(
+                  // complete tasks
+                  valueListenable: _box.listenable(),
+                  builder: (context, Box<Note> box, _) {
+                    return ListView.builder(
+                      itemCount: box.length,
+                      itemBuilder: (context, index) {
+                        Note n = box.getAt(index)!;
+                        if (n.complete) {
+                          return noteTile(note: n);
+                        } else {
+                          return const SizedBox(width: 0, height: 0);
+                        }
+                      },
+                    );
+                  })
+            ]),
+            // body: TabBarView(
+            //   controller: _tabController,
+            //   children: <Widget>[
+            //     Scaffold(
+            //         body: ListView(
+            //       children: _getTodoItems(_box, false),
+            //     )),
+            //     Scaffold(
+            //         body: ListView(
+            //       children: _getTodoItems(_box, true),
+            //     )),
+            //   ],
+            // ),
             floatingActionButton: FloatingActionButton(
               onPressed: () {
                 Navigator.push(
@@ -84,11 +126,12 @@ Widget _buildTitle() => const Text(
       textAlign: TextAlign.left,
     );
 
-List<Widget> _getTodoItems() {
+List<Widget> _getTodoItems(Box<Note> notebox, bool completed) {
   final List<Widget> _todoItems = <Widget>[];
-  for (int i = 0; i < 5; i++) {
-    //String title in _todoList
-    _todoItems.add(noteTile(title: "Test", datetime: DateTime.now()));
-  }
+  List<Note> notes = notebox.values.toList();
+  notes.forEach((n) => {
+        if (n.complete == completed) {_todoItems.add(noteTile(note: n))}
+      });
+  //String title in _todoList
   return _todoItems;
 }

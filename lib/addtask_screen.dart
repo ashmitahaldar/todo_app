@@ -1,11 +1,18 @@
 import 'dart:html';
+import 'dart:convert';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:date_time_picker/date_time_picker.dart';
 import 'package:intl/intl.dart';
 import 'package:flutter/services.dart';
-import 'package:sqflite/sqflite.dart';
+
+import 'models/note.dart';
+import 'package:hive/hive.dart';
+import 'package:hive_flutter/hive_flutter.dart';
+import 'home_screen.dart';
+
+const String noteBoxName = "note";
 
 class AddTaskScreen extends StatefulWidget {
   AddTaskScreen({Key? key, required this.title}) : super(key: key);
@@ -19,12 +26,15 @@ class AddTaskScreen extends StatefulWidget {
 class _AddTaskScreenState extends State<AddTaskScreen> {
   TextEditingController titleInput = TextEditingController();
   TextEditingController dateInput = TextEditingController();
+  late Box<Note> _box;
+  late int noteCount;
 
   @override
   void initState() {
     titleInput.text = "";
     dateInput.text = ""; //set the initial value of text field
     super.initState();
+    _box = Hive.box<Note>(noteBoxName);
   }
 
   @override
@@ -70,12 +80,13 @@ class _AddTaskScreenState extends State<AddTaskScreen> {
               child: DateTimePicker(
                 type: DateTimePickerType.dateTimeSeparate,
                 dateMask: 'd MMM, yyyy',
-                initialValue: DateTime.now().toString(),
+                //initialValue: DateTime.now().toString(),
                 firstDate: DateTime(2000),
                 lastDate: DateTime(2100),
                 icon: Icon(Icons.event),
                 dateLabelText: 'Date',
                 timeLabelText: "Time",
+                controller: dateInput,
                 selectableDayPredicate: (date) {
                   // Disable weekend days to select from the calendar
                   if (date.weekday == 6 || date.weekday == 7) {
@@ -88,17 +99,23 @@ class _AddTaskScreenState extends State<AddTaskScreen> {
                   print(val);
                   return null;
                 },
-                onSaved: (val) => print(val),
               ),
             ),
           ],
         ),
         floatingActionButton: FloatingActionButton.extended(
           onPressed: () {
-            Navigator.push(
+            Note mData = Note(
+                title: titleInput.text,
+                datetime: DateTime.parse(dateInput.text),
+                complete: false);
+            _box.add(mData);
+            Navigator.pop(context);
+            Navigator.pushReplacement(
                 context,
                 MaterialPageRoute(
-                    builder: (context) => AddTaskScreen(title: "Add Task")));
+                    builder: (BuildContext context) =>
+                        HomeScreen(title: 'Home Page')));
           },
           backgroundColor: Colors.blue,
           icon: const Icon(Icons.check),

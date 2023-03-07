@@ -1,9 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:todo_app/home_screen.dart';
-
+import 'package:path_provider/path_provider.dart';
+import 'package:hive/hive.dart';
+import 'package:hive_flutter/hive_flutter.dart';
+import 'package:todo_app/models/note.dart';
 import 'home_screen.dart';
 
-void main() {
+const String noteBoxName = "note";
+
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  // Initializes Hive with a valid directory in your app files
+  await Hive.initFlutter();
+  Hive.registerAdapter(NoteAdapter());
+  await Hive.openBox<Note>(noteBoxName);
   runApp(const MyApp());
 }
 
@@ -27,7 +37,7 @@ class MyApp extends StatelessWidget {
         // is not restarted.
         primarySwatch: Colors.blue,
       ),
-      home: HomeScreen(title: 'Flutter Demo Home Page'),
+      home: HomeScreen(title: 'Home Page'),
     );
   }
 }
