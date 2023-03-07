@@ -9,7 +9,7 @@ class Note extends HiveObject {
   @HiveField(1)
   final DateTime datetime;
   @HiveField(2)
-  final bool complete;
+  bool complete;
 
   Note({required this.title, required this.datetime, required this.complete});
 }

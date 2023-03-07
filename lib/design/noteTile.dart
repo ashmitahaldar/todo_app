@@ -13,34 +13,62 @@ const String noteBoxName = "note";
 
 class noteTile extends StatelessWidget {
   final Box<Note> _box = Hive.box<Note>(noteBoxName);
-  String title;
-  DateTime datetime;
-  late int notekey;
-  noteTile(
-      {Key? key,
-      required this.notekey,
-      required this.title,
-      required this.datetime})
-      : super(key: key);
+  Note note;
+  noteTile({
+    Key? key,
+    required this.note,
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return Card(
+        child: Dismissible(
+      key: Key('${note.key}-${note.title}'),
+      direction: DismissDirection.endToStart,
+      onDismissed: (direction) {
+        note.complete = true;
+        note.save();
+      },
       child: ListTile(
-        title: Text(title),
-        subtitle: Text(DateFormat('dd MMMM, yyyy – kk:mm a').format(datetime)),
+        title: Text(note.title),
+        subtitle:
+            Text(DateFormat('dd MMMM, yyyy – KK:mm a').format(note.datetime)),
         trailing: IconButton(
           icon: const Icon(Icons.close),
           onPressed: () {
-            _box.delete(notekey);
+            _box.delete(note.key);
             Navigator.pushReplacement(
                 context,
                 MaterialPageRoute(
                     builder: (BuildContext context) =>
                         HomeScreen(title: 'Home Page')));
+            ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+              content: Text("Item deleted"),
+            ));
           },
         ),
       ),
-    );
+    ));
   }
 }
+// return Card(
+    //   child: ListTile(
+    //     title: Text(note.title),
+    //     subtitle:
+    //         Text(DateFormat('dd MMMM, yyyy – kk:mm a').format(note.datetime)),
+    //     trailing: IconButton(
+    //       icon: const Icon(Icons.close),
+    //       onPressed: () {
+    //         _box.delete(note.key);
+    //         Navigator.pushReplacement(
+    //             context,
+    //             MaterialPageRoute(
+    //                 builder: (BuildContext context) =>
+    //                     HomeScreen(title: 'Home Page')));
+    //         ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+    //           content: Text("Item deleted"),
+    //         ));
+    //       },
+    //     ),
+    //   ),
+    // );
