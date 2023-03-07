@@ -87,13 +87,13 @@ class _AddTaskScreenState extends State<AddTaskScreen> {
                 dateLabelText: 'Date',
                 timeLabelText: "Time",
                 controller: dateInput,
-                selectableDayPredicate: (date) {
-                  // Disable weekend days to select from the calendar
-                  if (date.weekday == 6 || date.weekday == 7) {
-                    return false;
-                  }
-                  return true;
-                },
+                // selectableDayPredicate: (date) {
+                //   // Disable weekend days to select from the calendar
+                //   if (date.weekday == 6 || date.weekday == 7) {
+                //     return false;
+                //   }
+                //   return true;
+                // },
                 onChanged: (val) => print(val),
                 validator: (val) {
                   print(val);
