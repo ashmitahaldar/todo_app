@@ -60,19 +60,53 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                     },
                   )
                 ]),
-            body: TabBarView(
-              controller: _tabController,
-              children: <Widget>[
-                Scaffold(
-                    body: ListView(
-                  children: _getTodoItems(_box, false),
-                )),
-                Scaffold(
-                    body: ListView(
-                  children: _getTodoItems(_box, true),
-                )),
-              ],
-            ),
+            body: TabBarView(controller: _tabController, children: [
+              ValueListenableBuilder(
+                  // incomplete tasks
+                  valueListenable: _box.listenable(),
+                  builder: (context, Box<Note> box, _) {
+                    return ListView.builder(
+                      itemCount: box.length,
+                      itemBuilder: (context, index) {
+                        Note n = box.getAt(index)!;
+                        if (!n.complete) {
+                          return noteTile(note: n);
+                        } else {
+                          return const SizedBox(width: 0, height: 0);
+                        }
+                      },
+                    );
+                  }),
+              ValueListenableBuilder(
+                  // complete tasks
+                  valueListenable: _box.listenable(),
+                  builder: (context, Box<Note> box, _) {
+                    return ListView.builder(
+                      itemCount: box.length,
+                      itemBuilder: (context, index) {
+                        Note n = box.getAt(index)!;
+                        if (n.complete) {
+                          return noteTile(note: n);
+                        } else {
+                          return const SizedBox(width: 0, height: 0);
+                        }
+                      },
+                    );
+                  })
+            ]),
+            // body: TabBarView(
+            //   controller: _tabController,
+            //   children: <Widget>[
+            //     Scaffold(
+            //         body: ListView(
+            //       children: _getTodoItems(_box, false),
+            //     )),
+            //     Scaffold(
+            //         body: ListView(
+            //       children: _getTodoItems(_box, true),
+            //     )),
+            //   ],
+            // ),
             floatingActionButton: FloatingActionButton(
               onPressed: () {
                 Navigator.push(

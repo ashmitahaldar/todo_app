@@ -26,49 +26,51 @@ class noteTile extends StatelessWidget {
       key: Key('${note.key}-${note.title}'),
       direction: DismissDirection.endToStart,
       onDismissed: (direction) {
-        note.complete = true;
-        note.save();
+        _box.delete(note.key);
+        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+          content: Text("Item deleted"),
+        ));
       },
       child: ListTile(
+        leading: Checkbox(
+          value: note.complete,
+          onChanged: (bool? value) {
+            note.complete = value!;
+            note.save();
+          },
+        ),
         title: Text(note.title),
         subtitle:
             Text(DateFormat('dd MMMM, yyyy – KK:mm a').format(note.datetime)),
-        trailing: IconButton(
-          icon: const Icon(Icons.close),
-          onPressed: () {
-            _box.delete(note.key);
-            Navigator.pushReplacement(
-                context,
-                MaterialPageRoute(
-                    builder: (BuildContext context) =>
-                        HomeScreen(title: 'Home Page')));
-            ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-              content: Text("Item deleted"),
-            ));
-          },
-        ),
+        // trailing: IconButton(
+        //   icon: const Icon(Icons.check),
+        //   onPressed: () {
+        //     note.complete = true;
+        //     note.save();
+        //   },
+        // ),
       ),
     ));
   }
 }
 // return Card(
-    //   child: ListTile(
-    //     title: Text(note.title),
-    //     subtitle:
-    //         Text(DateFormat('dd MMMM, yyyy – kk:mm a').format(note.datetime)),
-    //     trailing: IconButton(
-    //       icon: const Icon(Icons.close),
-    //       onPressed: () {
-    //         _box.delete(note.key);
-    //         Navigator.pushReplacement(
-    //             context,
-    //             MaterialPageRoute(
-    //                 builder: (BuildContext context) =>
-    //                     HomeScreen(title: 'Home Page')));
-    //         ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-    //           content: Text("Item deleted"),
-    //         ));
-    //       },
-    //     ),
-    //   ),
-    // );
+//   child: ListTile(
+//     title: Text(note.title),
+//     subtitle:
+//         Text(DateFormat('dd MMMM, yyyy – kk:mm a').format(note.datetime)),
+//     trailing: IconButton(
+//       icon: const Icon(Icons.close),
+//       onPressed: () {
+//         _box.delete(note.key);
+//         Navigator.pushReplacement(
+//             context,
+//             MaterialPageRoute(
+//                 builder: (BuildContext context) =>
+//                     HomeScreen(title: 'Home Page')));
+//         ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+//           content: Text("Item deleted"),
+//         ));
+//       },
+//     ),
+//   ),
+// );
